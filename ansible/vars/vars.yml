@@ -1,0 +1,8 @@
+consul_ca_cert: "{{ lookup('file', './secrets/consul-agent-ca.pem') }}"
+consul_encrypt_key: "{{ secret_consul_encrypt_key }}"
+consul_servers:
+  - 192.168.0.50
+  - 192.168.0.51
+  - 192.168.0.52
+
+pihole_web_password: "{{ secret_pihole_web_password }}"

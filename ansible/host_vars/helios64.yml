@@ -1,0 +1,9 @@
+hostname: "helios64"
+
+install_docker: false
+
+nomad_datacenter: "storage"
+nomad_client_host_volumes:
+  - name: "cockroachdb"
+    path: "/data/cockroachdb"
+    read_only: "false"

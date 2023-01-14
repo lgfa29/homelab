@@ -1,0 +1,100 @@
+- name: "verify input"
+  ansible.builtin.assert:
+    that:
+      - nomad_server_enabled or nomad_client_enabled
+      - nomad_agent_name | length > 0
+
+- name: "remove default files"
+  become: true
+  ansible.builtin.file:
+    path: "{{ nomad_config_dir }}/{{ item }}"
+    state: "absent"
+  loop:
+    - "nomad.hcl"
+    - "nomad.env"
+
+- name: "create TLS directory"
+  become: true
+  ansible.builtin.file:
+    path: "{{ nomad_config_dir }}/tls"
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    state: "directory"
+    mode: "0700"
+
+- name: "write TLS files"
+  become: true
+  no_log: true
+  ansible.builtin.copy:
+    dest: "{{ item.dest }}"
+    content: "{{ item.content }}"
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    mode: "0600"
+  loop:
+    - dest: "{{ nomad_config_dir }}/tls/ca.pem"
+      content: "{{ nomad_tls_ca_cert }}"
+    - dest: "{{ nomad_config_dir }}/tls/cert.pem"
+      content: "{{ nomad_tls_cert }}"
+    - dest: "{{ nomad_config_dir }}/tls/cert-key.pem"
+      content: "{{ nomad_tls_cert_key }}"
+
+- name: "write Consul TLS files"
+  become: true
+  no_log: true
+  ansible.builtin.copy:
+    dest: "{{ item.dest }}"
+    content: "{{ item.content }}"
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    mode: "0600"
+  loop:
+    - dest: "{{ nomad_config_dir }}/tls/consul-ca.pem"
+      content: "{{ nomad_consul_ca_cert }}"
+    - dest: "{{ nomad_config_dir }}/tls/consul.pem"
+      content: "{{ nomad_consul_cert }}"
+    - dest: "{{ nomad_config_dir }}/tls/consul-key.pem"
+      content: "{{ nomad_consul_cert_key }}"
+  when: nomad_consul_use_ssl
+
+- name: "render base config file"
+  become: true
+  ansible.builtin.template:
+    src: "99_nomad.hcl.j2"
+    dest: "{{ nomad_config_dir }}/99_nomad.hcl"
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    mode: "0600"
+  notify:
+    - "restart nomad"
+
+- name: "render additional config files"
+  become: true
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ nomad_config_dir }}/{{ item.dest }}"
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    mode: "0600"
+  loop: "{{ nomad_extra_config_files }}"
+  notify:
+    - "restart nomad"
+
+- name: "create host volumes"
+  become: true
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: "directory"
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    mode: "0700"
+  loop: "{{ nomad_client_host_volumes }}"
+  notify:
+    - "restart nomad"
+
+- name: "enable and start service"
+  become: true
+  ansible.builtin.service:
+    name: "nomad"
+    state: "started"
+    enabled: true

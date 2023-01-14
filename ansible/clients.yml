@@ -1,0 +1,36 @@
+- hosts: "clients"
+  vars_files:
+    - "./vars/secrets.yml"
+  roles:
+    - role: "common"
+    - role: "geerlingguy.docker"
+      become: true
+      when: install_docker
+      tags: ["runtime", "docker"]
+    - role: "cni_plugins"
+    - role: "nomad"
+      vars:
+        nomad_version: "1.4.2"
+        nomad_agent_name: "{{ hostname }}"
+        nomad_client_enabled: true
+        nomad_tls_ca_cert: "{{ lookup('file', './secrets/tls/nomad/nomad-ca.pem') }}"
+        nomad_tls_cert: "{{ lookup('file', './secrets/tls/nomad/' + nomad_region + '-client.pem') }}"
+        nomad_tls_cert_key: "{{ lookup('file', './secrets/tls/nomad/' + nomad_region + '-client-key.pem') }}"
+        nomad_consul_address: "127.0.0.1:8501"
+        nomad_consul_ca_cert: "{{ lookup('file', './secrets/tls/consul/consul-agent-ca.pem') }}"
+        nomad_consul_cert: "{{ lookup('file', './secrets/tls/consul/' + consul_datacenter + '-nomad-consul-0.pem') }}"
+        nomad_consul_cert_key: "{{ lookup('file', './secrets/tls/consul/' + consul_datacenter + '-nomad-consul-0-key.pem') }}"
+      tags: ["tool", "nomad"]
+    - role: "consul"
+      vars:
+        consul_version: "1.13.3"
+        consul_node_name: "{{ hostname }}"
+        consul_bind_addr: "{{ ansible_default_ipv4.address }}"
+        consul_client_addr: "127.0.0.1 {{ ansible_default_ipv4.address }}"
+        consul_server_encrypt_key: "{{ secret_consul_encrypt_key }}"
+        consul_tls_ca_cert: "{{ lookup('file', './secrets/tls/consul/consul-agent-ca.pem') }}"
+        consul_tls_cert: "{{ lookup('file', './secrets/tls/consul/' + consul_datacenter + '-client-consul-0.pem') }}"
+        consul_tls_key: "{{ lookup('file', './secrets/tls/consul/' + consul_datacenter + '-client-consul-0-key.pem') }}"
+        consul_acl_tokens:
+          default: "{{ secret_consul_acl_node_token }}"
+      tags: ["tool", "consul"]

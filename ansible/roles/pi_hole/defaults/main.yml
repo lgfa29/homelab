@@ -1,0 +1,3 @@
+pihole_version: "v5.2.2"
+pihole_web_password: ""
+pihole_local_routes: {}

@@ -1,0 +1,29 @@
+- name: "{{ hashicorp_tool }} : download HashiCorp GPG key"
+  become: true
+  ansible.builtin.get_url:
+    url: "https://apt.releases.hashicorp.com/gpg"
+    dest: "/etc/apt/trusted.gpg.d/hashicorp.asc"
+    checksum: "sha256:ecc3a34eca4ba12166b58820fd8a71e8f6cc0166d7ed7598a63453648f49c4c5"
+
+- name: "{{ hashicorp_tool }} : install HashiCorp apt repo"
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/trusted.gpg.d/hashicorp.asc] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+    filename: "hashicorp"
+    state: "present"
+
+- name: "{{ hashicorp_tool }} : install specific package version"
+  become: true
+  ansible.builtin.apt:
+    name: "{{ hashicorp_tool }}={{ hashicorp_tool_version }}-{{ hashicorp_tool_pkg_version }}"
+    state: "present"
+    update_cache: true
+  when: hashicorp_tool_version | length > 0
+
+- name: "{{ hashicorp_tool }} : install latest package version"
+  become: true
+  ansible.builtin.apt:
+    name: "{{ hashicorp_tool }}"
+    state: "present"
+    update_cache: true
+  when: hashicorp_tool_version | length == 0

@@ -1,0 +1,99 @@
+data_dir  = "/opt/nomad/data"
+bind_addr = "0.0.0.0"
+
+name       = "{{ nomad_agent_name }}"
+region     = "{{ nomad_region }}"
+datacenter = "{{ nomad_datacenter }}"
+
+{% if nomad_server_enabled %}
+server {
+  enabled          = true
+  bootstrap_expect = {{ nomad_server_bootstrap_expect }}
+
+{% if nomad_server_encrypt_key | length > 0 %}
+  encrypt = "{{ nomad_server_encrypt_key }}"
+{% endif %}
+
+{% if nomad_server_server_join | length > 0 %}
+  server_join {
+    retry_join = {{ nomad_server_server_join | to_json }}
+  }
+{% endif %}
+}
+{% endif %}
+
+{% if nomad_client_enabled %}
+client {
+  enabled    = true
+  node_class = "{{ nomad_client_node_class }}"
+
+{% if nomad_client_server_join | length > 0 %}
+  server_join {
+    retry_join = {{ nomad_client_server_join | to_json }}
+  }
+{% endif %}
+
+{% if nomad_client_meta | length > 0 %}
+  meta {
+{% for k in nomad_client_meta %}
+    {{ k }} = "{{ nomad_client_meta[k] }}"
+{% endfor %}
+  }
+{% endif %}
+
+{% for volume in nomad_client_host_volumes %}
+  host_volume "{{ volume.name }}" {
+    path      = "{{ volume.path }}"
+    read_only = {{ volume.read_only }}
+  }
+{% endfor %}
+}
+{% endif %}
+
+{% if nomad_acl_enabled %}
+acl {
+  enabled = true
+}
+{% endif %}
+
+{% if nomad_tls_enabled %}
+tls {
+  http = true
+  rpc  = true
+
+  ca_file   = "{{ nomad_config_dir }}/tls/ca.pem"
+  cert_file = "{{ nomad_config_dir }}/tls/cert.pem"
+  key_file  = "{{ nomad_config_dir }}/tls/cert-key.pem"
+}
+{% endif %}
+
+{% if nomad_client_enable_raw_exec %}
+plugin "raw_exec" {
+  config {
+    enabled = true
+  }
+}
+{% endif %}
+
+{% if nomad_consul_acl_token | length > 0 %}
+consul {
+  address = "{{ nomad_consul_address }}"
+
+{% if nomad_consul_acl_token | length > 0 %}
+  token = "{{ nomad_consul_acl_token }}"
+{% endif %}
+
+{% if nomad_consul_use_ssl %}
+  ca_file   = "{{ nomad_config_dir }}/tls/consul-ca.pem"
+  cert_file = "{{ nomad_config_dir }}/tls/consul.pem"
+  key_file  = "{{ nomad_config_dir }}/tls/consul-key.pem"
+
+  ssl        = true
+  verify_ssl = true
+{% endif %}
+
+{% if nomad_consul_tags | length > 0 %}
+  tags = {{ nomad_consul_tags | to_json }}
+{% endif %}
+}
+{% endif %}

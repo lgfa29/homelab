@@ -1,0 +1,5 @@
+- name: "disable motd-news"
+  become: true
+  template:
+    src: "motd-news.j2"
+    dest: "/etc/default/motd-news"

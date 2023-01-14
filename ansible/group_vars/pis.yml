@@ -1,0 +1,2 @@
+common_apt_packages:
+  - "linux-modules-extra-raspi"

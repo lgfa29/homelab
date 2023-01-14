@@ -1,0 +1,12 @@
+- name: Get version
+  command: pihole version
+  register: current_version
+  ignore_errors: yes
+  become: yes
+
+- include: setup.yml
+  become: yes
+
+- include: install.yml
+  become: yes
+  when: current_version.stdout is not defined or pihole_version not in current_version.stdout

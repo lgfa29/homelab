@@ -1,0 +1,14 @@
+- name: "verify inputs"
+  ansible.builtin.assert:
+    that:
+      - hashicorp_tool | length > 0
+
+- name: "{{ hashicorp_tool }} : check if {{ hashicorp_tool }} is installed"
+  ansible.builtin.command: "{{ hashicorp_tool }} --version"
+  ignore_errors: true
+  register: hashicorp_tool_current_version
+
+- block:
+    - ansible.builtin.include_tasks: "install-Debian.yml"
+      when: ansible_os_family == "Debian"
+  when: hashicorp_tool_current_version.stdout is not defined or hashicorp_tool_version not in hashicorp_tool_current_version.stdout

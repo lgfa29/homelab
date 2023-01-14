@@ -1,0 +1,7 @@
+- name: "check if CNI plugins are already present"
+  ansible.builtin.stat:
+    path: "{{ cni_plugins_path }}"
+  register: "cni_plugins_dir_stat"
+
+- ansible.builtin.include_tasks: "install.yml"
+  when: not cni_plugins_dir_stat.stat.exists

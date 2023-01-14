@@ -1,0 +1,11 @@
+- hosts: "servers:clients"
+  tasks:
+    - name: "set hostname"
+      become: true
+      ansible.builtin.hostname:
+        name: "{{ hostname }}"
+      notify: "reboot"
+  handlers:
+    - name: "reboot"
+      become: true
+      ansible.builtin.reboot:

@@ -1,0 +1,6 @@
+dependencies:
+  - role: "hashicorp_tool"
+    vars:
+      hashicorp_tool: "consul"
+      hashicorp_tool_version: "{{ consul_version }}"
+      hashicorp_tool_pkg_version: "{{ consul_pkg_version }}"

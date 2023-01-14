@@ -1,0 +1,78 @@
+- name: "verify input"
+  ansible.builtin.assert:
+    that:
+      - consul_node_name | length > 0
+
+- name: "remove default files"
+  become: true
+  ansible.builtin.file:
+    path: "{{ consul_config_dir }}/{{ item }}"
+    state: "absent"
+  loop:
+    - "consul.hcl"
+    - "consul.env"
+
+- name: "remove condition on default config file"
+  become: true
+  ansible.builtin.lineinfile:
+    path: "/lib/systemd/system/consul.service"
+    search_string: "ConditionFileNotEmpty=/etc/consul.d/consul.hcl"
+    state: "absent"
+  notify:
+    - "daemon reload"
+
+- name: "create TLS directory"
+  become: true
+  ansible.builtin.file:
+    path: "{{ consul_config_dir }}/tls"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    state: "directory"
+    mode: "0700"
+
+- name: "write TLS files"
+  become: true
+  no_log: true
+  ansible.builtin.copy:
+    dest: "{{ item.dest }}"
+    content: "{{ item.content }}"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: "0600"
+  loop:
+    - dest: "{{ consul_config_dir }}/tls/consul-agent-ca.pem"
+      content: "{{ consul_tls_ca_cert }}"
+    - dest: "{{ consul_config_dir }}/tls/server-consul.pem"
+      content: "{{ consul_tls_cert }}"
+    - dest: "{{ consul_config_dir }}/tls/server-consul-key.pem"
+      content: "{{ consul_tls_key }}"
+
+- name: "render base config file"
+  become: true
+  ansible.builtin.template:
+    src: "99_consul.hcl.j2"
+    dest: "{{ consul_config_dir }}/99_consul.hcl"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: "0600"
+  notify:
+    - "restart consul"
+
+- name: "render additional config files"
+  become: true
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ consul_config_dir }}/{{ item.dest }}"
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: "0600"
+  loop: "{{ consul_extra_config_files }}"
+  notify:
+    - "restart consul"
+
+- name: "enable and start service"
+  become: true
+  ansible.builtin.service:
+    name: "consul"
+    state: "started"
+    enabled: true

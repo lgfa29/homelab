@@ -1,0 +1,25 @@
+- name: "create directory for CNI plugins"
+  become: true
+  ansible.builtin.file:
+    path: "{{ cni_plugins_path }}"
+    state: "directory"
+
+- name: "download CNI plugins"
+  ansible.builtin.get_url:
+    url: "{{ cni_plugins_url }}"
+    dest: "/tmp/cni-plugins.tgz"
+    mode: "600"
+  register: "cni_plugins_file"
+
+- name: "extract CNI plugins"
+  become: true
+  ansible.builtin.unarchive:
+    remote_src: true
+    src: "{{ cni_plugins_file.dest }}"
+    dest: "{{ cni_plugins_path }}"
+    mode: "777"
+
+- name: "remove CNI plugins tar file"
+  ansible.builtin.file:
+    path: "{{ cni_plugins_file.dest }}"
+    state: "absent"

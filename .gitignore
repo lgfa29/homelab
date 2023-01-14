@@ -1,0 +1,12 @@
+.env
+
+# Ansible
+ansible/secrets/
+ansible/vars/secrets.yml
+
+# Terraform
+.terraform
+terraform.tfstate*
+
+# Python
+venv

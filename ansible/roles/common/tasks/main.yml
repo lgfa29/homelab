@@ -1,0 +1,5 @@
+- ansible.builtin.include_tasks: "packages-Debian.yml"
+  when: ansible_os_family == "Debian"
+
+- ansible.builtin.include_tasks: "motd.yml"
+  when: ansible_distribution == "Ubuntu"

@@ -1,0 +1,37 @@
+nomad_version: ""
+nomad_pkg_version: "1"
+nomad_user: "root"
+nomad_group: "root"
+
+nomad_agent_name: ""
+nomad_region: "global"
+nomad_datacenter: "dc1"
+
+nomad_server_enabled: false
+nomad_server_bootstrap_expect: 1
+nomad_server_server_join: []
+nomad_server_encrypt_key: ""
+
+nomad_client_enabled: false
+nomad_client_node_class: ""
+nomad_client_server_join: []
+nomad_client_meta: {}
+nomad_client_enable_raw_exec: false
+nomad_client_host_volumes: []
+
+nomad_acl_enabled: true
+
+nomad_tls_enabled: true
+nomad_tls_ca_cert: ""
+nomad_tls_cert: ""
+nomad_tls_cert_key: ""
+
+nomad_consul_address: "127.0.0.1:8500"
+nomad_consul_acl_token: ""
+nomad_consul_use_ssl: true
+nomad_consul_ca_cert: ""
+nomad_consul_cert: ""
+nomad_consul_cert_key: ""
+nomad_consul_tags: []
+
+nomad_extra_config_files: []

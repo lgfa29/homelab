@@ -1,0 +1,24 @@
+consul_version: ""
+consul_pkg_version: "1"
+consul_user: "consul"
+consul_group: "consul"
+
+consul_node_name: ""
+consul_datacenter: "dc1"
+consul_client_addr: "127.0.0.1"
+consul_bind_addr: "0.0.0.0"
+consul_retry_join: []
+consul_encrypt_key: ""
+
+consul_server_enabled: false
+consul_server_bootstrap_expect: 1
+
+consul_acl_enabled: true
+consul_acl_tokens: {}
+
+consul_tls_enabled: true
+consul_tls_ca_cert: ""
+consul_tls_cert: ""
+consul_tls_key: ""
+
+consul_extra_config_files: []

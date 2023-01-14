@@ -1,0 +1,6 @@
+dependencies:
+  - role: "hashicorp_tool"
+    vars:
+      hashicorp_tool: "nomad"
+      hashicorp_tool_version: "{{ nomad_version }}"
+      hashicorp_tool_pkg_version: "{{ nomad_pkg_version }}"

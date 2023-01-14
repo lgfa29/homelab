@@ -1,0 +1,3 @@
+- name: Restart DNS
+  command: pihole restartdns reload
+  become: yes

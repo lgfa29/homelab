@@ -5,7 +5,7 @@
     - role: "common"
     - role: "nomad"
       vars:
-        nomad_version: "1.4.2"
+        nomad_version: "1.4.7"
         nomad_agent_name: "{{ hostname }}"
         nomad_server_enabled: true
         nomad_server_encrypt_key: "{{ secret_nomad_encrypt_key }}"

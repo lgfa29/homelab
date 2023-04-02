@@ -3,7 +3,7 @@
   ansible.builtin.get_url:
     url: "https://apt.releases.hashicorp.com/gpg"
     dest: "/etc/apt/trusted.gpg.d/hashicorp.asc"
-    checksum: "sha256:ecc3a34eca4ba12166b58820fd8a71e8f6cc0166d7ed7598a63453648f49c4c5"
+    checksum: "sha256:cafb01beac341bf2a9ba89793e6dd2468110291adfbb6c62ed11a0cde6c09029"
 
 - name: "{{ hashicorp_tool }} : install HashiCorp apt repo"
   become: true

@@ -10,7 +10,7 @@
     - role: "cni_plugins"
     - role: "nomad"
       vars:
-        nomad_version: "1.4.2"
+        nomad_version: "1.4.7"
         nomad_agent_name: "{{ hostname }}"
         nomad_client_enabled: true
         nomad_tls_ca_cert: "{{ lookup('file', './secrets/tls/nomad/nomad-ca.pem') }}"

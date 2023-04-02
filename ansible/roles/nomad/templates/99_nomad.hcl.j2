@@ -44,7 +44,9 @@ client {
 {% for volume in nomad_client_host_volumes %}
   host_volume "{{ volume.name }}" {
     path      = "{{ volume.path }}"
-    read_only = {{ volume.read_only }}
+    {% if 'read_only' in volume %}
+      read_only = {{ volume.read_only }}
+    {% endif %}
   }
 {% endfor %}
 }

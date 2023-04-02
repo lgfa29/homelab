@@ -1,5 +1,9 @@
+locals {
+  pihole_image = "pihole/pihole:2023.03.1"
+}
+
 job "pihole" {
-  datacenters = ["dc1"]
+  datacenters = ["storage"]
 
   group "pihole" {
     restart {
@@ -30,8 +34,6 @@ job "pihole" {
       tags = [
         "traefik.enable=true",
         "traefik.http.routers.pihole.rule=Host(`pihole.feijuca.fun`)",
-        "traefik.http.routers.pihole.middlewares=piholeAdmin",
-        "traefik.http.middlewares.piholeAdmin.addPrefix.prefix=/admin",
       ]
       canary_tags = ["canary"]
 
@@ -42,18 +44,24 @@ job "pihole" {
       }
     }
 
+    volume "pihole" {
+      type   = "host"
+      source = "pihole"
+    }
+
     task "pihole" {
       driver = "docker"
 
       config {
-        image = "pihole/pihole:2022.10"
+        image = local.pihole_image
         ports = ["dns", "http"]
       }
 
       env {
-        TZ                = "America/Toronto"
-        WEBPASSWORD_FILE  = "${NOMAD_SECRETS_DIR}/webpassword"
-        DNSMASQ_LISTENING = "all"
+        TZ                   = "America/Toronto"
+        WEBPASSWORD_FILE     = "${NOMAD_SECRETS_DIR}/webpassword"
+        DNSMASQ_LISTENING    = "all"
+        FTLCONF_PRIVACYLEVEL = "0"
       }
 
       resources {
@@ -68,6 +76,11 @@ EOF
 
         destination = "${NOMAD_SECRETS_DIR}/webpassword"
         change_mode = "noop"
+      }
+
+      volume_mount {
+        volume      = "pihole"
+        destination = "/etc/pihole"
       }
     }
   }

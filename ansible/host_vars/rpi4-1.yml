@@ -1,7 +1,2 @@
 hostname: "rpi4-1"
-
 nomad_datacenter: "dc1"
-nomad_client_host_volumes:
-  - name: "pihole"
-    path: "/opt/nomad/volumes/pihole"
-    read_only: "false"

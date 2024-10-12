@@ -64,8 +64,8 @@
 - name: "render base config file"
   become: true
   ansible.builtin.template:
-    src: "99_nomad.hcl.j2"
-    dest: "{{ nomad_config_dir }}/99_nomad.hcl"
+    src: "10_nomad.hcl.j2"
+    dest: "{{ nomad_config_dir }}/10_nomad.hcl"
     owner: "{{ nomad_user }}"
     group: "{{ nomad_group }}"
     mode: "0600"

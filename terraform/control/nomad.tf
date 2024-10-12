@@ -19,6 +19,15 @@ resource "nomad_variable" "isponsorblocktv" {
   }
 }
 
+resource "nomad_variable" "tailscale" {
+  path      = "nomad/jobs/tailscale"
+  namespace = "default"
+
+  items = {
+    auth_key = local.secrets.tailscale.auth_key
+  }
+}
+
 resource "nomad_node_pool" "storage" {
   name = "storage"
 }

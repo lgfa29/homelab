@@ -20,6 +20,8 @@ nomad_client_host_volumes:
     path: "/data/nomad/volumes/adguard-work"
   - name: "home-assistant"
     path: "/data/nomad/volumes/home-assistant"
+  - name: "tailscale"
+    path: "/data/nomad/volumes/tailscale"
 nomad_extra_config_files:
-  - src: "{{ playbook_dir }}/templates/01-docker-privileged.hcl"
-    dest: "01-docker-privileged.hcl"
+  - src: "{{ playbook_dir }}/templates/99_docker_privileged.hcl"
+    dest: "99_docker_privileged.hcl"

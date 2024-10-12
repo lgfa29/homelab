@@ -1,1 +1,2 @@
 common_apt_packages: []
+common_sudo_users: []

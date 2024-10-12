@@ -57,7 +57,7 @@ job "coredns" {
 
   file {{env "NOMAD_TASK_DIR"}}/cluster.db feijuca.fun
   forward consul {{env "attr.unique.network.ip-address"}}:8600
-  {{- with service "dns.pihole"}}
+  {{- with service "dns.adguard"}}
   forward . {{range .}}{{.Address}}:{{.Port}} {{end}}
   {{- end}}
 }
@@ -70,9 +70,6 @@ EOF
       template {
         data          = <<EOF
 feijuca.fun.      IN      SOA     ns.dns.cluster.feijuca. hostmaster.cluster.feijuca. 2015082541 7200 3600 1209600 3600
-{{- range service "nomad-client"}}
-nomad.feijuca.fun.  IN  A   {{.Address}}
-{{- end}}
 {{- range service "traefik"}}
 *.feijuca.fun.    IN      A       {{.Address}}
 {{- end}}

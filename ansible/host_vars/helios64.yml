@@ -2,7 +2,24 @@ hostname: "helios64"
 
 install_docker: false
 
-nomad_datacenter: "storage"
+consul_data_dir: "/data/consul"
+
+nomad_data_dir: "/data/nomad/data"
+nomad_datacenter: "dc1"
+nomad_node_pool: "storage"
 nomad_client_host_volumes:
   - name: "pihole"
-    path: "/opt/nomad/volumes/pihole"
+    path: "/data/nomad/volumes/pihole"
+  - name: "loki"
+    path: "/data/nomad/volumes/loki"
+  - name: "grafana"
+    path: "/data/nomad/volumes/grafana"
+  - name: "adguard-conf"
+    path: "/data/nomad/volumes/adguard-conf"
+  - name: "adguard-work"
+    path: "/data/nomad/volumes/adguard-work"
+  - name: "home-assistant"
+    path: "/data/nomad/volumes/home-assistant"
+nomad_extra_config_files:
+  - src: "{{ playbook_dir }}/templates/01-docker-privileged.hcl"
+    dest: "01-docker-privileged.hcl"

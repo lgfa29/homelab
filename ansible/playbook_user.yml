@@ -1,0 +1,8 @@
+- hosts: "all"
+  roles:
+    - role: "users"
+      vars:
+        users_sudo:
+          - name: "laoqui"
+            shell: "/bin/bash"
+            ssh_public_keys_url: "https://github.com/lgfa29.keys"

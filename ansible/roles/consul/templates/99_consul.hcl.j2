@@ -1,4 +1,4 @@
-data_dir    = "/opt/consul"
+data_dir    = "{{ consul_data_dir }}"
 client_addr = "{{ consul_client_addr }}"
 bind_addr   = "{{ consul_bind_addr }}"
 
@@ -21,7 +21,8 @@ addresses {
 ports {
   grpc  = 8502
 {% if consul_tls_enabled %}
-  https = 8501
+  https    = 8501
+  grpc_tls = 8503
 {% endif %}
 }
 

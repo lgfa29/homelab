@@ -1,0 +1,23 @@
+- name: "Add users"
+  become: true
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    groups: "sudo"
+    append: true
+    state: "present"
+    createhome: true
+    shell: "{{ item.shell | default('/bin/bash') }}"
+  loop: "{{ users_sudo }}"
+
+- name: "Add users to passwordless sudo"
+  become: true
+  ansible.builtin.template:
+    src: "80-ansible-sudo-users.j2"
+    dest: "/etc/sudoers.d/80-ansible-sudo-user"
+    mode: 0440
+  when: "users_sudo | length > 0"
+
+- ansible.builtin.include_tasks: "authorized_keys.yml"
+  loop: "{{ users_sudo }}"
+  loop_control:
+    loop_var: "user"

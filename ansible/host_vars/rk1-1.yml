@@ -1,0 +1,6 @@
+hostname: "rk1-1"
+nomad_datacenter: "dc1"
+nomad_client_node_class: "rk1"
+nomad_extra_config_files:
+  - src: "{{ playbook_dir }}/templates/rk1-1-10-docker.hcl"
+    dest: "10-docker.hcl"

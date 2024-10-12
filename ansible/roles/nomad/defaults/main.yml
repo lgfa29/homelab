@@ -2,10 +2,12 @@ nomad_version: ""
 nomad_pkg_version: "1"
 nomad_user: "root"
 nomad_group: "root"
+nomad_data_dir: "/opt/nomad/data"
 
 nomad_agent_name: ""
 nomad_region: "global"
 nomad_datacenter: "dc1"
+nomad_node_pool: ""
 
 nomad_server_enabled: false
 nomad_server_bootstrap_expect: 1

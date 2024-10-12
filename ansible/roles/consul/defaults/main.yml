@@ -2,6 +2,7 @@ consul_version: ""
 consul_pkg_version: "1"
 consul_user: "consul"
 consul_group: "consul"
+consul_data_dir: "/opt/consul"
 
 consul_node_name: ""
 consul_datacenter: "dc1"

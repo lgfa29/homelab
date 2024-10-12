@@ -83,6 +83,11 @@ job "traefik" {
         cert = "{{env "NOMAD_SECRETS_DIR"}}/consul-cert.pem"
         key = "{{env "NOMAD_SECRETS_DIR"}}/consul-key.pem"
         insecureSkipVerify = true
+
+[tls.options]
+  [tls.options.nomad]
+    [tls.options.nomad.clientAuth]
+      caFiles = []
 EOF
         destination = "${NOMAD_SECRETS_DIR}/traefik.toml"
       }

@@ -1,0 +1,12 @@
+#cloud-config
+
+ssh_pwauth: false
+disable_root: true
+users:
+  - name: laoqui
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+     - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ3Drve8vMbgQMigPRRGzeVdbO3fG5obsspdFOhL6eDW x1
+ntp:
+  enabled: true

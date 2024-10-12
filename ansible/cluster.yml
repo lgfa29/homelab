@@ -1,2 +1,0 @@
-- import_playbook: servers.yml
-- import_playbook: clients.yml

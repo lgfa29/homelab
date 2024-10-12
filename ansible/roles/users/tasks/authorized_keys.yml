@@ -1,0 +1,23 @@
+- block:
+    - name: "Fetch public keys from {{ user.ssh_public_keys_url }}"
+      ansible.builtin.uri:
+        url: "{{user.ssh_public_keys_url}}"
+        return_content: true
+      register: "remote_ssh_public_keys"
+    - name: "Add authorized SSH keys from {{ user.ssh_public_keys_url }}"
+      become: true
+      ansible.posix.authorized_key:
+        user: "{{ user.name }}"
+        state: "present"
+        key: "{{ item }}"
+      loop: "{{ remote_ssh_public_keys.content.strip().split('\n') }}"
+  when: "user.ssh_public_keys_url is defined and user.ssh_public_keys_url | length > 0"
+
+- name: "Add authorized SSH keys"
+  become: true
+  ansible.posix.authorized_key:
+    user: "{{ user.name }}"
+    state: "present"
+    key: "{{ item }}"
+  when: "user.ssh_public_keys is defined"
+  loop: "{{ user.ssh_public_keys }}"

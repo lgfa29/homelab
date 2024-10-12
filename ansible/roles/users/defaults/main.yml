@@ -1,0 +1,19 @@
+# users_sudo is a list of users to configure in the target.
+# Each entry has the following fields.
+#   - name (string, required): The username to add.
+#   - shell (string, "/bin/bash"): The default user shell.
+#   - ssh_public_keys (list, []): List of SSH public key string to authorize.
+#   - ssh_public_keys_url (string, ""): URL to fetch public keys. Must be
+#                                       accessible from all targets and return
+#                                       one key per line in the body as plain
+#                                       text.
+#
+# Example:
+#  users_sudo:
+#    - name: "laoqui"
+#      shell: "/bin/bash"
+#      ssh_public_keys_url: "https://github.com/lgfa29.keys"
+#      ssh_public_keys:
+#        - "{{ lookup('ansible.builtin.file', '~/.ssh/id_ed25519.pub') }}"
+#        - "<PUBLIC KEY STRING>"
+users_sudo: []

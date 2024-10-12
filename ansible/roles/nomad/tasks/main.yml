@@ -38,6 +38,8 @@
       content: "{{ nomad_tls_cert }}"
     - dest: "{{ nomad_config_dir }}/tls/cert-key.pem"
       content: "{{ nomad_tls_cert_key }}"
+  notify:
+    - "restart nomad"
 
 - name: "write Consul TLS files"
   become: true
@@ -56,6 +58,8 @@
     - dest: "{{ nomad_config_dir }}/tls/consul-key.pem"
       content: "{{ nomad_consul_cert_key }}"
   when: nomad_consul_use_ssl
+  notify:
+    - "restart nomad"
 
 - name: "render base config file"
   become: true

@@ -1,36 +1,35 @@
-- hosts: "clients"
+- hosts: "servers"
   vars_files:
     - "./vars/secrets.yml"
   roles:
     - role: "common"
-    - role: "geerlingguy.docker"
-      become: true
-      when: install_docker
-      tags: ["runtime", "docker"]
-    - role: "cni_plugins"
     - role: "nomad"
       vars:
-        nomad_version: "1.4.7"
+        nomad_version: "1.7.5"
         nomad_agent_name: "{{ hostname }}"
-        nomad_client_enabled: true
+        nomad_server_enabled: true
+        nomad_server_encrypt_key: "{{ secret_nomad_encrypt_key }}"
         nomad_tls_ca_cert: "{{ lookup('file', './secrets/tls/nomad/nomad-ca.pem') }}"
-        nomad_tls_cert: "{{ lookup('file', './secrets/tls/nomad/' + nomad_region + '-client.pem') }}"
-        nomad_tls_cert_key: "{{ lookup('file', './secrets/tls/nomad/' + nomad_region + '-client-key.pem') }}"
+        nomad_tls_cert: "{{ lookup('file', './secrets/tls/nomad/' + nomad_region + '-server.pem') }}"
+        nomad_tls_cert_key: "{{ lookup('file', './secrets/tls/nomad/' + nomad_region + '-server-key.pem') }}"
         nomad_consul_address: "127.0.0.1:8501"
         nomad_consul_ca_cert: "{{ lookup('file', './secrets/tls/consul/consul-agent-ca.pem') }}"
         nomad_consul_cert: "{{ lookup('file', './secrets/tls/consul/' + consul_datacenter + '-nomad-consul-0.pem') }}"
         nomad_consul_cert_key: "{{ lookup('file', './secrets/tls/consul/' + consul_datacenter + '-nomad-consul-0-key.pem') }}"
+        nomad_consul_tags:
+          - "traefik.enable=true"
+          - "traefik.http.routers.nomad.rule=Host(`nomad.feijuca.fun`)"
       tags: ["tool", "nomad"]
     - role: "consul"
       vars:
-        consul_version: "1.13.3"
+        consul_version: "1.17.3"
         consul_node_name: "{{ hostname }}"
-        consul_bind_addr: "{{ ansible_default_ipv4.address }}"
-        consul_client_addr: "127.0.0.1 {{ ansible_default_ipv4.address }}"
+        consul_client_addr: "0.0.0.0"
+        consul_server_enabled: true
         consul_server_encrypt_key: "{{ secret_consul_encrypt_key }}"
         consul_tls_ca_cert: "{{ lookup('file', './secrets/tls/consul/consul-agent-ca.pem') }}"
-        consul_tls_cert: "{{ lookup('file', './secrets/tls/consul/' + consul_datacenter + '-client-consul-0.pem') }}"
-        consul_tls_key: "{{ lookup('file', './secrets/tls/consul/' + consul_datacenter + '-client-consul-0-key.pem') }}"
+        consul_tls_cert: "{{ lookup('file', './secrets/tls/consul/' + consul_datacenter + '-server-consul-1.pem') }}"
+        consul_tls_key: "{{ lookup('file', './secrets/tls/consul/' + consul_datacenter + '-server-consul-1-key.pem') }}"
         consul_acl_tokens:
           default: "{{ secret_consul_acl_node_token }}"
       tags: ["tool", "consul"]

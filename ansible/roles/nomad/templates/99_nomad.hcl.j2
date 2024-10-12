@@ -1,4 +1,4 @@
-data_dir  = "/opt/nomad/data"
+data_dir  = "{{ nomad_data_dir }}"
 bind_addr = "0.0.0.0"
 
 name       = "{{ nomad_agent_name }}"
@@ -26,6 +26,9 @@ server {
 client {
   enabled    = true
   node_class = "{{ nomad_client_node_class }}"
+  {% if nomad_node_pool | length > 0 %}
+    node_pool = "{{ nomad_node_pool }}"
+  {% endif %}
 
 {% if nomad_client_server_join | length > 0 %}
   server_join {
@@ -76,6 +79,14 @@ plugin "raw_exec" {
   }
 }
 {% endif %}
+
+plugin "docker" {
+  config {
+    volumes {
+      enabled = true
+    }
+  }
+}
 
 {% if nomad_consul_acl_token | length > 0 %}
 consul {

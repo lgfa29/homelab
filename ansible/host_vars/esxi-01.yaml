@@ -1,0 +1,14 @@
+hostname: "esxi-01"
+
+install_consul: false
+
+nomad_data_dir: "/data/nomad/data"
+nomad_datacenter: "dc1"
+nomad_node_pool: "storage"
+nomad_client_host_volumes:
+  - name: "registry"
+    path: "/data/nomad/volumes/registry"
+nomad_extra_config_files:
+  - src: "{{ playbook_dir }}/templates/99_docker_privileged.hcl"
+    dest: "99_docker_privileged.hcl"
+nomad_consul_address: ""

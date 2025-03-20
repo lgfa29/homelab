@@ -1,0 +1,20 @@
+- name: "create /etc/systemd/resolved.conf.d/"
+  become: true
+  ansible.builtin.file:
+    path: "/etc/systemd/resolved.conf.d/"
+    owner: "root"
+    group: "root"
+    state: "directory"
+    mode: "0755"
+
+- name: "configure systemd-resolved DNS"
+  become: true
+  ansible.builtin.template:
+    src: "dns_systemd_resolved.conf"
+    dest: "/etc/systemd/resolved.conf.d/dns.conf"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  notify:
+    - "daemon reload"
+    - "restart systemd-resolved"

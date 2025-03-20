@@ -21,6 +21,16 @@
   notify:
     - "daemon reload"
 
+- name: "allow unit to restart forever"
+  become: true
+  ansible.builtin.lineinfile:
+    path: "/lib/systemd/system/consul.service"
+    regexp: "^StartLimitIntervalSec="
+    insertafter: "After=network-online.target"
+    line: "StartLimitIntervalSec=0"
+  notify:
+    - "daemon reload"
+
 - name: "create TLS directory"
   become: true
   ansible.builtin.file:

@@ -1,0 +1,6 @@
+- name: "check if systemd-resolved is being used"
+  become: true
+  ansible.builtin.service_facts:
+
+- ansible.builtin.include_tasks: "dns_systemd_resolved.yaml"
+  when: "'systemd-resolved.service' in ansible_facts.services and ansible_facts.services['systemd-resolved.service'].state == 'running'"

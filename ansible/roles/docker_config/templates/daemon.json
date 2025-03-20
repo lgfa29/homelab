@@ -1,0 +1,3 @@
+{
+  "insecure-registries": {{ docker_config_insecure_registries | to_json }}
+}

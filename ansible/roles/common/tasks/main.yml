@@ -3,3 +3,5 @@
 
 - ansible.builtin.include_tasks: "motd.yml"
   when: ansible_distribution == "Ubuntu"
+
+- ansible.builtin.include_tasks: "dns.yaml"

@@ -9,8 +9,9 @@ job "grafana" {
     }
 
     service {
-      name = "grafana"
-      port = "http"
+      provider = "nomad"
+      name     = "grafana"
+      port     = "http"
       tags = [
         "traefik.enable=true",
         "traefik.http.routers.grafana.rule=Host(`grafana.feijuca.fun`)",

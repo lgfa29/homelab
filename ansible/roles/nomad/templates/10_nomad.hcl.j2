@@ -88,7 +88,7 @@ plugin "docker" {
   }
 }
 
-{% if nomad_consul_acl_token | length > 0 %}
+{% if nomad_consul_address | length > 0 %}
 consul {
   address = "{{ nomad_consul_address }}"
 

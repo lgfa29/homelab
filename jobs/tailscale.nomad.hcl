@@ -12,8 +12,9 @@ job "tailscale" {
     }
 
     service {
-      name = "tailscale-healthz"
-      port = "healthz"
+      provider = "nomad"
+      name     = "tailscale-healthz"
+      port     = "healthz"
 
       check {
         type     = "http"
@@ -50,6 +51,7 @@ job "tailscale" {
         TS_STATE_DIR             = "/var/lib/tailscale"
         TS_HOSTNAME              = "homelab-subnet"
         TS_HEALTHCHECK_ADDR_PORT = "0.0.0.0:${NOMAD_PORT_healthz}"
+        TS_EXTRA_ARGS            = "--snat-subnet-routes=false"
       }
 
       template {

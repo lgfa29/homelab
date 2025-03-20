@@ -1,0 +1,2 @@
+docker_config_daemon_path: "/etc/docker/daemon.json"
+docker_config_insecure_registries: []

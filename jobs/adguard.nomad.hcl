@@ -19,20 +19,23 @@ job "adguard" {
       port "dns" {
         to = 53
       }
+
       port "ui" {
         to = "3000"
       }
     }
 
     service {
-      name = "adguard"
-      port = "dns"
-      tags = ["dns"]
+      provider = "nomad"
+      name     = "adguard"
+      port     = "dns"
+      tags     = ["dns"]
     }
 
     service {
-      name = "adguard-ui"
-      port = "ui"
+      provider = "nomad"
+      name     = "adguard-ui"
+      port     = "ui"
       tags = [
         "traefik.enable=true",
         "traefik.http.routers.adguard.rule=Host(`adguard.feijuca.fun`)",

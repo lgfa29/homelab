@@ -3,9 +3,14 @@
     - "./vars/secrets.yml"
   roles:
     - role: "common"
+      vars:
+        common_dns_primary:
+          - "192.168.0.33"
+          - "192.168.0.34"
+      tags: ["common"]
     - role: "geerlingguy.docker"
       become: true
-      when: install_docker
+      when: "install_docker"
       tags: ["runtime", "docker"]
     - role: "cni_plugins"
     - role: "nomad"
@@ -34,3 +39,4 @@
         consul_acl_tokens:
           default: "{{ secret_consul_acl_node_token }}"
       tags: ["tool", "consul"]
+      when: "install_consul"

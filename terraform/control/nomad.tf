@@ -1,12 +1,13 @@
+resource "random_password" "traefik_admin" {
+  length = 30
+}
+
 resource "nomad_variable" "traefik" {
   path      = "nomad/jobs/traefik"
   namespace = "default"
 
   items = {
-    consul_token   = local.secrets.traefik.consul_token
-    consul_key     = base64encode(file("${path.module}/../../ansible/secrets/tls/consul/feijuca-cli-consul-0-key.pem"))
-    consul_cert    = base64encode(file("${path.module}/../../ansible/secrets/tls/consul/feijuca-cli-consul-0.pem"))
-    consul_ca_cert = base64encode(file("${path.module}/../../ansible/secrets/tls/consul/consul-agent-ca.pem"))
+    admin_password = bcrypt(random_password.traefik_admin.result)
   }
 }
 

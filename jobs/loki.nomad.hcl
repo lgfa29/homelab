@@ -8,8 +8,9 @@ job "loki" {
     }
 
     service {
-      name = "loki"
-      port = "http"
+      provider = "nomad"
+      name     = "loki"
+      port     = "http"
       tags = [
         "traefik.enable=true",
         "traefik.http.routers.loki.rule=Host(`loki.feijuca.fun`)",

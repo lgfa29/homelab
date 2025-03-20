@@ -1,0 +1,8 @@
+- name: "configure Docker daemon"
+  become: true
+  ansible.builtin.template:
+    src: "daemon.json"
+    dest: "{{ docker_config_daemon_path }}"
+    mode: "0600"
+  notify:
+    - "restart docker"

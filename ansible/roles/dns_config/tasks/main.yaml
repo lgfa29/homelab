@@ -1,0 +1,10 @@
+- name: "configure resolved DNS"
+  become: true
+  ansible.builtin.template:
+    src: "dns.conf"
+    dest: "/etc/systemd/resolved.conf.d/dns.conf"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  notify:
+    - "daemon reload"

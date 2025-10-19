@@ -1,3 +1,0 @@
-hostname: "rpi4-1"
-nomad_datacenter: "dc1"
-nomad_client_node_class: "rpi4"

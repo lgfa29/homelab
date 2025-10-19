@@ -1,3 +1,0 @@
-install_consul: true
-
-nomad_consul_acl_token: "{{ secret_nomad_server_consul_acl_token }}"

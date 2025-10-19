@@ -1,2 +1,4 @@
+hostname: "{{ inventory_hostname }}"
+
 nomad_region: "feijuca"
-consul_datacenter: "feijuca"
+nomad_datacenter: "dc1"

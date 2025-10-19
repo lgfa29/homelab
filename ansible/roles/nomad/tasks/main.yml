@@ -31,6 +31,7 @@
     group: "{{ nomad_group }}"
     state: "directory"
     mode: "0700"
+  when: "nomad_tls_enabled"
 
 - name: "write TLS files"
   become: true
@@ -50,6 +51,7 @@
       content: "{{ nomad_tls_cert_key }}"
   notify:
     - "restart nomad"
+  when: "nomad_tls_enabled"
 
 - name: "write Consul TLS files"
   become: true
@@ -67,7 +69,7 @@
       content: "{{ nomad_consul_cert }}"
     - dest: "{{ nomad_config_dir }}/tls/consul-key.pem"
       content: "{{ nomad_consul_cert_key }}"
-  when: nomad_consul_use_ssl
+  when: "nomad_consul_use_ssl"
   notify:
     - "restart nomad"
 

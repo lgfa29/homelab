@@ -13,11 +13,6 @@ terraform {
   }
 }
 
-provider "consul" {
-  address = "server.feijuca.consul:8501"
-  scheme  = "https"
-}
-
 provider "nomad" {
-  address = "https://nomad.service.consul:4646"
+  address = "http://192.168.1.31:4646"
 }

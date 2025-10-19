@@ -1,7 +1,1 @@
-hostname: "rk1-1"
-nomad_datacenter: "dc1"
 nomad_client_node_class: "rk1"
-
-nomad_client_host_volumes:
-  - name: "jellyfin"
-    path: "/data/nomad/volumes/jellyfin"

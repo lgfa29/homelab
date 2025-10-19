@@ -1,3 +1,4 @@
+/*
 # Node ACL
 resource "consul_acl_policy" "node" {
   name  = "node-policy"
@@ -125,3 +126,4 @@ resource "consul_acl_token" "traefik" {
     consul_acl_policy.traefik.name,
   ]
 }
+*/

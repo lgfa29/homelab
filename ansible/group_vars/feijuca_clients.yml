@@ -1,11 +1,1 @@
-install_consul: true
 install_docker: true
-
-servers: "{{ groups['feijuca_servers'] | map('extract', hostvars, ['ansible_host']) }}"
-nomad_client_server_join: "{{ servers }}"
-consul_retry_join: "{{ servers }}"
-
-nomad_consul_acl_token: "{{ secret_nomad_client_consul_acl_token }}"
-
-docker_config_insecure_registries:
-  - "192.168.0.36:5000"

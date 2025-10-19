@@ -5,6 +5,14 @@ name       = "{{ nomad_agent_name }}"
 region     = "{{ nomad_region }}"
 datacenter = "{{ nomad_datacenter }}"
 
+{% if nomad_advertise_addr | length > 0 %}
+advertise {
+  http = "{{ nomad_advertise_addr }}"
+  rpc  = "{{ nomad_advertise_addr }}"
+  serf = "{{ nomad_advertise_addr }}"
+}
+{% endif %}
+
 {% if nomad_server_enabled %}
 server {
   enabled          = true

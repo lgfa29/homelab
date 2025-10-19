@@ -1,0 +1,4 @@
+nomad_data_dir: "/mnt/ssd/opt/nomad/data"
+
+docker_daemon_options:
+  data-root: "/mnt/ssd/var/lib/docker"

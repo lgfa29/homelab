@@ -1,0 +1,2 @@
+common_apt_packages:
+  - "qemu-guest-agent"

@@ -28,7 +28,7 @@ job "tailscale" {
       driver = "docker"
 
       config {
-        image   = "tailscale/tailscale:v1.74.1"
+        image   = "tailscale/tailscale:v1.88.2"
         ports   = ["healthz"]
         cap_add = ["NET_ADMIN", "SYS_MODULE"]
         volumes = [
@@ -47,7 +47,7 @@ job "tailscale" {
       }
 
       env {
-        TS_ROUTES                = "192.168.0.0/24"
+        TS_ROUTES                = "192.168.1.0/24"
         TS_STATE_DIR             = "/var/lib/tailscale"
         TS_HOSTNAME              = "homelab-subnet"
         TS_HEALTHCHECK_ADDR_PORT = "0.0.0.0:${NOMAD_PORT_healthz}"

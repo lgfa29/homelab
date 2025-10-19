@@ -3,6 +3,7 @@ nomad_pkg_version: "1"
 nomad_user: "root"
 nomad_group: "root"
 nomad_data_dir: "/opt/nomad/data"
+nomad_advertise_addr: ""
 
 nomad_agent_name: ""
 nomad_region: "global"
@@ -28,7 +29,7 @@ nomad_tls_ca_cert: ""
 nomad_tls_cert: ""
 nomad_tls_cert_key: ""
 
-nomad_consul_address: "127.0.0.1:8500"
+nomad_consul_address: ""
 nomad_consul_acl_token: ""
 nomad_consul_use_ssl: true
 nomad_consul_ca_cert: ""

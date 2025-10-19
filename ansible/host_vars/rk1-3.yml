@@ -1,3 +1,1 @@
-hostname: "rk1-3"
-nomad_datacenter: "dc1"
 nomad_client_node_class: "rk1"

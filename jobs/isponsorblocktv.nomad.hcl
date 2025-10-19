@@ -4,7 +4,7 @@ job "isponsorblocktv" {
       driver = "docker"
 
       config {
-        image = "ghcr.io/dmunozv04/isponsorblocktv:v2.2.1"
+        image = "ghcr.io/dmunozv04/isponsorblocktv:v2.6.0"
         args  = ["--data", "${NOMAD_SECRETS_DIR}/config"]
       }
 
@@ -32,7 +32,10 @@ job "isponsorblocktv" {
   "skip_count_tracking": true,
   "mute_ads": false,
   "skip_ads": false,
-  "auto_play": false
+  "minimum_skip_length": 1,
+  "auto_play": false,
+  "join_name": "iSponsorBlockTV",
+  "use_proxy": false
 }
 {{end}}
 EOF

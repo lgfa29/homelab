@@ -63,11 +63,20 @@ resource "ansible_group" "proxmox_clients" {
 resource "ansible_host" "nomad_servers" {
   for_each = local.nomad_servers
 
-  name   = each.value.name
+  name   = "px-${each.value.name}"
   groups = [ansible_group.proxmox_servers.name]
 
   variables = {
     ansible_host = local.nomad_servers_ip[each.key]
+  }
+}
+
+resource "ansible_host" "px_nomad_client_1" {
+  name   = "px-nomad-client-1"
+  groups = [ansible_group.proxmox_clients.name]
+
+  variables = {
+    ansible_host = "192.168.1.42"
   }
 }
 

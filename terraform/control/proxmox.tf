@@ -115,6 +115,11 @@ resource "proxmox_virtual_environment_vm" "nomad_servers" {
     bridge   = "vmbr1"
     firewall = true
   }
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes  = [initialization]
+  }
 }
 
 resource "proxmox_virtual_environment_file" "nomad_servers_metadata" {

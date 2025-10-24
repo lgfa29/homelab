@@ -2,14 +2,22 @@ resource "random_password" "traefik_admin" {
   length = 30
 }
 
-resource "nomad_variable" "traefik" {
-  path      = "nomad/jobs/traefik"
-  namespace = "default"
-
-  items = {
-    admin_password = bcrypt(random_password.traefik_admin.result)
-  }
+resource "random_password" "postgres_root" {
+  length = 30
 }
+
+resource "random_password" "seaweedfs_filer_pg" {
+  length = 30
+}
+
+#resource "nomad_variable" "traefik" {
+#  path      = "nomad/jobs/traefik"
+#  namespace = "default"
+#
+#  items = {
+#    admin_password = bcrypt(random_password.traefik_admin.result)
+#  }
+#}
 
 resource "nomad_variable" "isponsorblocktv" {
   path      = "nomad/jobs/isponsorblocktv"
@@ -26,6 +34,26 @@ resource "nomad_variable" "tailscale" {
 
   items = {
     auth_key = local.secrets.tailscale.auth_key
+  }
+}
+
+resource "nomad_variable" "postgres" {
+  path      = "nomad/jobs/postgres"
+  namespace = "default"
+
+  items = {
+    root_password = random_password.postgres_root.result
+  }
+}
+
+resource "nomad_variable" "seaweeds_filer" {
+  path      = "nomad/jobs/seaweedfs-filer"
+  namespace = "default"
+
+  items = {
+    pg_database = "seaweedfs_filer"
+    pg_user     = "seaweedfs_filer"
+    pg_password = random_password.seaweedfs_filer_pg.result
   }
 }
 

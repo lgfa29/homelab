@@ -1,12 +1,10 @@
 locals {
-  traefik_image = "traefik:v3.3.3"
+  traefik_image = "traefik:v3.5.3"
 }
 
 job "traefik" {
-  datacenters = ["dc1"]
-
   group "traefik" {
-    count = 3
+    count = 1
 
     network {
       port "http" {
@@ -15,6 +13,10 @@ job "traefik" {
 
       port "https" {
         static = 443
+      }
+
+      port "pg" {
+        static = 5432
       }
     }
 
@@ -38,7 +40,7 @@ job "traefik" {
       config {
         image = local.traefik_image
         args  = ["--configfile", "${NOMAD_SECRETS_DIR}/traefik.yaml"]
-        ports = ["http", "https"]
+        ports = ["http", "https", "pg"]
       }
 
       identity {
@@ -66,6 +68,8 @@ entryPoints:
     #      permanent: true
   https:
     address: ":{{env "NOMAD_PORT_https"}}"
+  pg:
+    address: ":{{env "NOMAD_PORT_pg"}}"
 providers:
   file:
     watch: true
@@ -73,10 +77,7 @@ providers:
   nomad:
     exposedByDefault: false
     endpoint:
-      address: "https://{{ env "attr.unique.network.ip-address"}}:4646"
-      token: "{{env "NOMAD_TOKEN"}}"
-      tls:
-        insecureSkipVerify: true
+      address: "unix:///{{env "NOMAD_SECRETS_DIR"}}/api.sock"
 EOF
       }
 
@@ -84,35 +85,40 @@ EOF
         destination = "${NOMAD_SECRETS_DIR}/config/routes.yaml"
         change_mode = "noop"
         data        = <<EOF
+        #tcp:
+        #  routers:
+        #    pg:
+        #      entryPoints:
+        #        - "pg"
 http:
   routers:
     dashboard:
       rule: "Host(`traefik.feijuca.fun`)"
+      entryPoints:
+        - "http"
       service: "api@internal"
-      middlewares:
-        - "auth"
+      #middlewares:
+      #  - "auth"
     turingpi:
       rule: "Host(`turingpi.feijuca.fun`)"
+      entryPoints:
+        - "http"
       service: "turingpi"
     nomad:
       rule: "Host(`nomad.feijuca.fun`)"
+      entryPoints:
+        - "http"
       service: "nomad"
-  middlewares:
-    auth:
-      basicAuth:
-        users:
-          - "admin:{{with nomadVar "nomad/jobs/traefik"}}{{.admin_password.Value}}{{end}}"
   services:
     turingpi:
       loadBalancer:
         serversTransport: "tlsInsecure"
         servers:
-          - url: "https://192.168.0.30"
+          - url: "https://192.168.1.30"
     nomad:
       loadBalancer:
-        serversTransport: "tlsInsecure"
         servers:
-          - url: "https://192.168.0.50:4646"
+          - url: "http://192.168.1.31:4646"
   serversTransports:
     tlsInsecure:
       insecureSkipVerify: true

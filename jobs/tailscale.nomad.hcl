@@ -1,12 +1,5 @@
 job "tailscale" {
-  node_pool = "storage"
-
   group "tailscale" {
-    volume "tailscale" {
-      type   = "host"
-      source = "tailscale"
-    }
-
     network {
       port "healthz" {}
     }
@@ -24,26 +17,23 @@ job "tailscale" {
       }
     }
 
+    volume "tailscale" {
+      type            = "csi"
+      source          = "tailscale"
+      access_mode     = "single-node-writer"
+      attachment_mode = "file-system"
+    }
+
     task "tailscale" {
       driver = "docker"
 
       config {
-        image   = "tailscale/tailscale:v1.88.2"
+        image   = "tailscale/tailscale:v1.88.4"
         ports   = ["healthz"]
         cap_add = ["NET_ADMIN", "SYS_MODULE"]
         volumes = [
           "/dev/net/tun:/dev/net/tun"
         ]
-      }
-
-      volume_mount {
-        volume      = "tailscale"
-        destination = "/var/lib/tailscale"
-      }
-
-      resources {
-        cpu    = 300
-        memory = 512
       }
 
       env {
@@ -55,13 +45,23 @@ job "tailscale" {
       }
 
       template {
+        destination = "${NOMAD_SECRETS_DIR}/env"
+        env         = true
         data        = <<EOF
 {{with nomadVar "nomad/jobs/tailscale" -}}
 TS_AUTHKEY={{.auth_key}}
 {{end -}}
 EOF
-        destination = "${NOMAD_SECRETS_DIR}/env"
-        env         = true
+      }
+
+      resources {
+        cpu    = 300
+        memory = 512
+      }
+
+      volume_mount {
+        volume      = "tailscale"
+        destination = "/var/lib/tailscale"
       }
     }
   }

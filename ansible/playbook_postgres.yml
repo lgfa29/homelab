@@ -1,0 +1,68 @@
+- hosts: "127.0.0.1"
+  connection: "local"
+  vars_files:
+    - "./vars/secrets.yml"
+  vars:
+    pg_host: "pg.feijuca.fun"
+    pg_port: 5432
+    pg_user: "postgres"
+    pg_password: "{{ secret_pg_password }}"
+    pg_apps:
+      - database: "seaweedfs_filer"
+        user: "seaweedfs_filer"
+        password: "{{ secret_seaweedfs_filer_pg_password  }}"
+  tasks:
+    - name: "Create database user"
+      community.postgresql.postgresql_user:
+        name: "{{ item.user }}"
+        password: "{{ item.password }}"
+        login_host: "{{ pg_host }}"
+        login_port: "{{ pg_port }}"
+        login_user: "{{ pg_user }}"
+        login_password: "{{ pg_password }}"
+      loop: "{{ pg_apps }}"
+      loop_control:
+        label: "{{ item.user }}"
+
+    - name: "Create database"
+      community.postgresql.postgresql_db:
+        name: "{{ item.database }}"
+        encoding: "UTF-8"
+        state: "present"
+        login_host: "{{ pg_host }}"
+        login_port: "{{ pg_port }}"
+        login_user: "{{ pg_user }}"
+        login_password: "{{ pg_password }}"
+      loop: "{{ pg_apps }}"
+      loop_control:
+        label: "{{ item.database }}"
+
+    - name: "Grant all privileges to user"
+      community.postgresql.postgresql_privs:
+        privs: "ALL"
+        type: "database"
+        obj: "{{ item.database }}"
+        role: "{{ item.user }}"
+        login_host: "{{ pg_host }}"
+        login_port: "{{ pg_port }}"
+        login_user: "{{ pg_user }}"
+        login_password: "{{ pg_password }}"
+        login_db: "postgres"
+      loop: "{{ pg_apps }}"
+      loop_control:
+        label: "{{ item.user }}@{{ item.database }}"
+
+    - name: "Grant all privileges to public schema"
+      community.postgresql.postgresql_privs:
+        privs: "ALL"
+        type: "schema"
+        obj: "public"
+        role: "{{ item.user }}"
+        login_host: "{{ pg_host }}"
+        login_port: "{{ pg_port }}"
+        login_user: "{{ pg_user }}"
+        login_password: "{{ pg_password }}"
+        login_db: "{{ item.database }}"
+      loop: "{{ pg_apps }}"
+      loop_control:
+        label: "{{ item.user }}@{{ item.database }}"

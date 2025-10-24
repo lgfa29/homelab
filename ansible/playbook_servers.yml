@@ -12,7 +12,7 @@
     - role: "nomad"
       vars:
         nomad_version: "1.10.5"
-        nomad_agent_name: "{{ hostname }}"
+        nomad_agent_name: "{{ inventory_hostname }}"
         nomad_advertise_addr: "{{ ansible_default_ipv4.address }}"
         nomad_server_enabled: true
         nomad_server_server_join: "{{ groups['feijuca_servers'] | map('extract', hostvars, ['ansible_host']) }}"

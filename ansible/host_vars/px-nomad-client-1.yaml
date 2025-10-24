@@ -1,0 +1,5 @@
+nomad_client_host_volumes:
+  - name: "postgres"
+    path: "/var/opt/nomad/volumes/postgres"
+  - name: "seaweedfs"
+    path: "/var/opt/nomad/volumes/seaweedfs"

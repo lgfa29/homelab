@@ -57,6 +57,6 @@ resource "nomad_variable" "seaweeds_filer" {
   }
 }
 
-resource "nomad_node_pool" "storage" {
-  name = "storage"
+resource "nomad_node_pool" "vila" {
+  name = "vila"
 }

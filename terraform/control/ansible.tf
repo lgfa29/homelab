@@ -39,6 +39,7 @@ resource "ansible_group" "feijuca_clients" {
   children = [
     ansible_group.proxmox_clients.name,
     ansible_group.rk1_clients.name,
+    ansible_group.vila_clients.name,
   ]
 }
 
@@ -125,6 +126,40 @@ resource "ansible_group" "rk1_clients" {
 
 resource "ansible_host" "rk1_instances" {
   for_each = local.rk1_instances
+
+  name   = each.value.name
+  groups = each.value.groups
+
+  variables = {
+    ansible_host = each.value.ip
+  }
+}
+
+# Vila.
+locals {
+  vila_instances = {
+    vila_rpi4_1 = {
+      name   = "vila-rpi4-1"
+      ip     = "100.101.210.98"
+      groups = [ansible_group.vila_clients.name]
+    }
+  }
+}
+
+resource "ansible_group" "vila" {
+  name = "vila"
+
+  children = [
+    ansible_group.vila_clients.name,
+  ]
+}
+
+resource "ansible_group" "vila_clients" {
+  name = "vila_clients"
+}
+
+resource "ansible_host" "vila_rpi4" {
+  for_each = local.vila_instances
 
   name   = each.value.name
   groups = each.value.groups

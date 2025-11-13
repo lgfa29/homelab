@@ -9,6 +9,10 @@
           - "9.9.9.9"
       tags: ["common"]
 
+    - role: "tailscale"
+      when: "tailscale_auth_key | length > 0"
+      tags: ["tailscale"]
+
     - role: "geerlingguy.docker"
       become: true
       when: "install_docker"
@@ -18,13 +22,17 @@
 
     - role: "nomad"
       vars:
+        default_nomad_config_files:
+          - src: "{{ playbook_dir }}/templates/99_docker_privileged.hcl"
+            dest: "99_docker_privileged.hcl"
         nomad_version: "1.10.5"
         nomad_agent_name: "{{ hostname }}"
         nomad_client_enabled: true
         nomad_client_server_join: "{{ groups['feijuca_servers'] | map('extract', hostvars, ['ansible_host']) }}"
         nomad_tls_enabled: false
         nomad_consul_use_ssl: false
-        nomad_extra_config_files:
-          - src: "{{ playbook_dir }}/templates/99_docker_privileged.hcl"
-            dest: "99_docker_privileged.hcl"
+        nomad_extra_config_files: "{{
+          default_nomad_config_files +
+          (host_nomad_extra_config_files | default([]))
+        }}"
       tags: ["tool", "nomad"]

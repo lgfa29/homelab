@@ -17,6 +17,7 @@ nomad_server_encrypt_key: ""
 
 nomad_client_enabled: false
 nomad_client_node_class: ""
+nomad_client_network_interface: ""
 nomad_client_server_join: []
 nomad_client_meta: {}
 nomad_client_enable_raw_exec: false

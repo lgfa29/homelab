@@ -103,7 +103,7 @@
     state: "directory"
     owner: "{{ nomad_user }}"
     group: "{{ nomad_group }}"
-    mode: "0700"
+    mode: "0777"
   loop: "{{ nomad_client_host_volumes }}"
   notify:
     - "restart nomad"

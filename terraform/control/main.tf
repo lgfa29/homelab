@@ -8,7 +8,7 @@ terraform {
     }
     nomad = {
       source  = "hashicorp/nomad"
-      version = "2.1.0"
+      version = "2.5.1"
     }
     proxmox = {
       source  = "bpg/proxmox"

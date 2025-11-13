@@ -1,5 +1,9 @@
 nomad_client_host_volumes:
   - name: "postgres"
     path: "/var/opt/nomad/volumes/postgres"
+  - name: "prometheus"
+    path: "/var/opt/nomad/volumes/prometheus"
   - name: "seaweedfs"
     path: "/var/opt/nomad/volumes/seaweedfs"
+
+tailscale_auth_key: "{{ secret_tailscale_auth_key }}"

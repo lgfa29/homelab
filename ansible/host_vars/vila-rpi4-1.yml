@@ -1,0 +1,3 @@
+host_nomad_extra_config_files:
+  - src: "{{ playbook_dir }}/templates/01_disable_exec_java.hcl"
+    dest: "01_disable_exec_java.hcl"

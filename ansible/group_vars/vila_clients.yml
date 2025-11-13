@@ -1,1 +1,2 @@
 nomad_node_pool: "vila"
+nomad_client_network_interface: "tailscale0"

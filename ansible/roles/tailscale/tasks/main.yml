@@ -1,0 +1,50 @@
+- name: "verify inputs"
+  ansible.builtin.assert:
+    that:
+      - "tailscale_auth_key | length > 0"
+
+- name: "install tailscale GPG key"
+  become: true
+  ansible.builtin.get_url:
+    url: "https://pkgs.tailscale.com/stable/ubuntu/noble.noarmor.gpg"
+    dest: "/usr/share/keyrings/tailscale-archive-keyring.gpg"
+
+- name: "install tailscale apt list file"
+  become: true
+  ansible.builtin.get_url:
+    url: "https://pkgs.tailscale.com/stable/ubuntu/noble.tailscale-keyring.list"
+    dest: "/etc/apt/sources.list.d/tailscale.list"
+
+- name: "install tailscale"
+  become: true
+  ansible.builtin.apt:
+    name: "tailscale"
+    update_cache: true
+    state: "present"
+
+- name: "start and enable tailscaled service"
+  become: true
+  ansible.builtin.service:
+    name: "tailscaled"
+    state: "started"
+    enabled: true
+
+- name: "tailscale status"
+  become: true
+  ansible.builtin.command:
+    argv:
+      - "tailscale"
+      - "status"
+      - "--json"
+  register: "tailscale_status"
+  changed_when: false
+
+- name: "tailscale up"
+  become: true
+  ansible.builtin.command:
+    argv:
+      - "tailscale"
+      - "up"
+      - "--auth-key={{ tailscale_auth_key }}"
+  when:
+    - "not (tailscale_status.stdout | from_json).Self.Online"

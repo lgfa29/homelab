@@ -3,8 +3,13 @@ job "seaweedfs-volumes" {
     count = 3
 
     constraint {
-      operator  = "distinct_hosts"
-      value     = "true"
+      operator = "distinct_hosts"
+      value    = "true"
+    }
+
+    constraint {
+      distinct_property = meta.rack
+      value             = "2"
     }
 
     network {

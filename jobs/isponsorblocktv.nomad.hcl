@@ -1,5 +1,11 @@
 job "isponsorblocktv" {
   group "isponsorblocktv" {
+    restart {
+      attempts = 15
+      delay    = "3s"
+      mode     = "delay"
+    }
+
     task "isponsorblocktv" {
       driver = "docker"
 

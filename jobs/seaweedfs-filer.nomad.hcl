@@ -10,6 +10,7 @@ job "seaweedfs-filer" {
     network {
       port "http" {}
       port "grpc" {}
+      port "metrics" {}
     }
 
     service {
@@ -40,13 +41,26 @@ job "seaweedfs-filer" {
       }
     }
 
+    service {
+      provider = "nomad"
+      name     = "seaweedfs-filer-metrics"
+      port     = "metrics"
+
+      check {
+        type     = "http"
+        path     = "/metrics"
+        method   = "HEAD"
+        timeout  = "1s"
+        interval = "10s"
+      }
+    }
 
     task "seaweedfs-filer" {
       driver = "docker"
 
       config {
-        image = "chrislusf/seaweedfs:3.97"
-        ports = ["http", "grpc"]
+        image = "chrislusf/seaweedfs:4.06"
+        ports = ["http", "grpc", "metrics"]
         args = [
           "-config_dir", NOMAD_SECRETS_DIR,
           "filer",
@@ -55,6 +69,7 @@ job "seaweedfs-filer" {
           "-master", SEAWEEDFS_MASTER,
           "-port", NOMAD_PORT_http,
           "-port.grpc", NOMAD_PORT_grpc,
+          "-metricsPort", NOMAD_PORT_metrics,
         ]
       }
 

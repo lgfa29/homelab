@@ -1,5 +1,11 @@
 job "tailscale" {
   group "tailscale" {
+    restart {
+      attempts = 15
+      delay    = "3s"
+      mode     = "delay"
+    }
+
     network {
       port "healthz" {}
     }

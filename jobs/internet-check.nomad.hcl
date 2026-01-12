@@ -1,5 +1,11 @@
 job "internet-check" {
   group "ping" {
+    restart {
+      attempts = 15
+      delay    = "3s"
+      mode     = "delay"
+    }
+
     network {
       port "http" {}
     }

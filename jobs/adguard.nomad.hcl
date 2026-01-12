@@ -3,6 +3,7 @@ job "adguard" {
     restart {
       attempts = 15
       delay    = "3s"
+      mode     = "delay"
     }
 
     network {

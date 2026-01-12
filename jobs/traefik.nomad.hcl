@@ -4,7 +4,13 @@ locals {
 
 job "traefik" {
   group "traefik" {
-    count = 1
+    count = 2
+
+    restart {
+      attempts = 15
+      delay    = "3s"
+      mode     = "delay"
+    }
 
     network {
       port "http" {
@@ -109,6 +115,11 @@ http:
       entryPoints:
         - "http"
       service: "nomad"
+    torresmo:
+      rule: "Host(`torresmo.feijuca.fun`)"
+      entryPoints:
+        - "http"
+      service: "torresmo"
   services:
     turingpi:
       loadBalancer:
@@ -119,6 +130,11 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.1.31:4646"
+    torresmo:
+      loadBalancer:
+        serversTransport: "tlsInsecure"
+        servers:
+          - url: "https://192.168.1.11:8006"
   serversTransports:
     tlsInsecure:
       insecureSkipVerify: true

@@ -1,5 +1,11 @@
 job "prometheus" {
   group "prometheus" {
+    restart {
+      attempts = 15
+      delay    = "3s"
+      mode     = "delay"
+    }
+
     network {
       port "http" {}
     }
@@ -69,6 +75,36 @@ scrape_configs:
         replacement: {{.Address}}:{{.Port}}
 {{- end}}
 {{- end}}
+
+{{- range nomadService 1 (env "NOMAD_ALLOC_ID") "nut-metrics"}}
+  - job_name: "nut"
+    static_configs:
+      - targets:
+      {{- range nomadService "nut" }}
+          - {{.Address}}:{{.Port}}
+      {{- end }}
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: {{.Address}}:{{.Port}}
+{{- end}}
+
+{{- range $svc := sprig_list "master" "volumes" "filer"}}
+  - job_name: "seaweedfs-{{$svc}}"
+    static_configs:
+      - targets:
+      {{- range nomadService (printf "seaweedfs-%s-metrics" $svc)}}
+          - {{.Address}}:{{.Port}}
+      {{- end }}
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+{{- end }}
 EOF
       }
 

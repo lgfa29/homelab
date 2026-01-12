@@ -15,17 +15,37 @@ job "seaweedfs-volumes" {
     network {
       port "http" {}
       port "grpc" {}
+      port "metrics" {}
     }
 
     service {
       provider = "nomad"
       name     = "seaweedfs-volumes"
       port     = "http"
-      tags     = ["http"]
 
       check {
         type     = "http"
         path     = "/status"
+        method   = "HEAD"
+        timeout  = "1s"
+        interval = "10s"
+      }
+    }
+
+    service {
+      provider = "nomad"
+      name     = "seaweedfs-volumes-metrics"
+      port     = "metrics"
+
+      tags = [
+        "traefik.enable=true",
+        "traefik.http.routers.seaweedfs-volumes-metrics.rule=Host(`seaweedfs-volumes-metrics.feijuca.fun`)",
+      ]
+
+      check {
+        type     = "http"
+        path     = "/metrics"
+        method   = "HEAD"
         timeout  = "1s"
         interval = "10s"
       }
@@ -40,8 +60,8 @@ job "seaweedfs-volumes" {
       driver = "docker"
 
       config {
-        image = "chrislusf/seaweedfs:3.97"
-        ports = ["http", "grpc"]
+        image = "chrislusf/seaweedfs:4.06"
+        ports = ["http", "grpc", "metrics"]
         args = [
           "volume",
           "-mserver", SEAWEEDFS_MASTER,
@@ -52,13 +72,14 @@ job "seaweedfs-volumes" {
           "-ip.bind", "0.0.0.0",
           "-port", NOMAD_PORT_http,
           "-port.grpc", NOMAD_PORT_grpc,
+          "-metricsPort", NOMAD_PORT_metrics,
           "-publicUrl", NOMAD_HOST_ADDR_http,
         ]
       }
 
       resources {
         cpu    = 512
-        memory = 2048
+        memory = 4096
       }
 
       volume_mount {

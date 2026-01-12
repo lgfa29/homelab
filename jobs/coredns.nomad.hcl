@@ -11,6 +11,7 @@ job "coredns" {
     restart {
       attempts = 15
       delay    = "3s"
+      mode     = "delay"
     }
 
     network {
@@ -74,10 +75,10 @@ job "coredns" {
   forward . {{range nomadService "adguard"}}{{.Address}}:{{.Port}} {{else}}149.112.121.10 149.112.122.10{{end}}
 }
 
-feijuca.fun. {
+feijuca.fun:{{env "NOMAD_PORT_dns"}} {
   import default
 
-  file {{env "NOMAD_TASK_DIR"}}/cluster.db feijuca.fun
+  file {{env "NOMAD_TASK_DIR"}}/feijuca.fun.db
 }
 EOF
         change_mode   = "signal"
@@ -85,11 +86,14 @@ EOF
       }
 
       template {
-        destination   = "${NOMAD_TASK_DIR}/cluster.db"
+        destination   = "${NOMAD_TASK_DIR}/feijuca.fun.db"
         data          = <<EOF
-feijuca.fun.      IN      SOA     ns.dns.cluster.feijuca. hostmaster.cluster.feijuca. 2015082541 7200 3600 1209600 3600
+$ORIGIN feijuca.fun.
+@    IN  SOA  ns{{env "NOMAD_ALLOC_INDEX"}}.feijuca.fun. lgfa29.gmail.com. 2015082541 7200 3600 1209600 3600
+
+ns{{env "NOMAD_ALLOC_INDEX"}}  IN  A    {{env "NOMAD_IP_dns"}}
 {{- range nomadService "traefik"}}
-*.feijuca.fun.    IN      A       {{.Address}}
+*    IN  A    {{.Address}}
 {{- end}}
 EOF
         change_mode   = "signal"

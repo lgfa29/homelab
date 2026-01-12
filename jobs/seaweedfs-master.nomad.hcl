@@ -3,13 +3,15 @@ job "seaweedfs-master" {
     network {
       port "http" {}
       port "grpc" {}
+      port "metrics" {}
     }
 
     service {
       provider = "nomad"
       name     = "http-seaweedfs-master"
       port     = "http"
-      tags     = [
+
+      tags = [
         "traefik.enable=true",
         "traefik.http.routers.seaweedfs.rule=Host(`seaweedfs.feijuca.fun`)",
       ]
@@ -27,10 +29,28 @@ job "seaweedfs-master" {
       provider = "nomad"
       name     = "grpc-seaweedfs-master"
       port     = "grpc"
-      tags     = ["grpc"]
 
       check {
         type     = "tcp"
+        timeout  = "1s"
+        interval = "10s"
+      }
+    }
+
+    service {
+      provider = "nomad"
+      name     = "seaweedfs-master-metrics"
+      port     = "metrics"
+
+      tags = [
+        "traefik.enable=true",
+        "traefik.http.routers.seaweedfs-metrics.rule=Host(`seaweedfs-metrics.feijuca.fun`)",
+      ]
+
+      check {
+        type     = "http"
+        path     = "/metrics"
+        method   = "HEAD"
         timeout  = "1s"
         interval = "10s"
       }
@@ -40,8 +60,8 @@ job "seaweedfs-master" {
       driver = "docker"
 
       config {
-        image = "chrislusf/seaweedfs:3.97"
-        ports = ["http", "grpc"]
+        image = "chrislusf/seaweedfs:4.06"
+        ports = ["http", "grpc", "metrics"]
         args = [
           "master",
           "-mdir", "${NOMAD_TASK_DIR}/seaweedfs",
@@ -49,6 +69,7 @@ job "seaweedfs-master" {
           "-ip.bind", "0.0.0.0",
           "-port", NOMAD_PORT_http,
           "-port.grpc", NOMAD_PORT_grpc,
+          "-metricsPort", NOMAD_PORT_metrics,
           "-defaultReplication", "010",
         ]
       }

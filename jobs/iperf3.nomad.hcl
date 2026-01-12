@@ -2,6 +2,12 @@ job "iperf3" {
   type = "system"
 
   group "iperf3" {
+    restart {
+      attempts = 15
+      delay    = "3s"
+      mode     = "delay"
+    }
+
     network {
       port "server" {
         static = 5201

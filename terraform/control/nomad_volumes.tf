@@ -1,6 +1,27 @@
 data "nomad_plugin" "seaweedfs" {
-  plugin_id        = "seaweedfs"
+  plugin_id = "seaweedfs"
+  #wait_for_healthy = true
+}
+
+data "nomad_plugin" "seaweedfs_test" {
+  plugin_id        = "seaweedfs-test"
   wait_for_healthy = true
+}
+
+resource "nomad_csi_volume" "test" {
+  lifecycle {
+    prevent_destroy = true
+  }
+
+  plugin_id    = data.nomad_plugin.seaweedfs_test.plugin_id
+  volume_id    = "test"
+  name         = "test"
+  capacity_min = "1GiB"
+
+  capability {
+    access_mode     = "single-node-writer"
+    attachment_mode = "file-system"
+  }
 }
 
 resource "nomad_csi_volume" "tailscale" {
@@ -44,6 +65,22 @@ resource "nomad_csi_volume" "adguard-work" {
   volume_id    = "adguard-work"
   name         = "adguard-work"
   capacity_min = "5GiB"
+
+  capability {
+    access_mode     = "single-node-writer"
+    attachment_mode = "file-system"
+  }
+}
+
+resource "nomad_csi_volume" "grafana" {
+  lifecycle {
+    prevent_destroy = true
+  }
+
+  plugin_id    = data.nomad_plugin.seaweedfs.plugin_id
+  volume_id    = "grafana"
+  name         = "grafana"
+  capacity_min = "10GiB"
 
   capability {
     access_mode     = "single-node-writer"

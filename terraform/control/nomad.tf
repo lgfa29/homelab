@@ -10,15 +10,6 @@ resource "random_password" "seaweedfs_filer_pg" {
   length = 30
 }
 
-#resource "nomad_variable" "traefik" {
-#  path      = "nomad/jobs/traefik"
-#  namespace = "default"
-#
-#  items = {
-#    admin_password = bcrypt(random_password.traefik_admin.result)
-#  }
-#}
-
 resource "nomad_variable" "isponsorblocktv" {
   path      = "nomad/jobs/isponsorblocktv"
   namespace = "default"
